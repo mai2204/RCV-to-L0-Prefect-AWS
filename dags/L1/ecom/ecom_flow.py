@@ -12,8 +12,6 @@ import re
 @task
 def parse_s3_key(s3_key: str):
     import re
-
-    # data/ecom/order_reviews/2026/04/09/
     pattern = r"data/ecom/(.+)/(\d{4})/(\d{2})/(\d{2})/"
 
     match = re.match(pattern, s3_key)
@@ -47,24 +45,24 @@ def get_matching_files(bucket: str, table: str, date: str):
     logger = get_run_logger()
     s3 = boto3.client("s3")
 
-    # match filename format in RCV
-    prefix = f"{table}_ecom_{date}"
-
     logger.info(f"Searching in bucket: {bucket}")
-    logger.info(f"Using prefix: {prefix}")
 
-    response = s3.list_objects_v2(
-        Bucket=bucket,
-        Prefix=prefix
-    )
+    response = s3.list_objects_v2(Bucket=bucket)
 
     contents = response.get("Contents", [])
 
-    files = [obj["Key"] for obj in contents]
+    matched = []
 
-    logger.info(f"Matched files: {files}")
+    for obj in contents:
+        key = obj["Key"]
+        filename = key.split("/")[-1]
 
-    return files
+        if filename.startswith(f"{table}_ecom_") and date in filename:
+            matched.append(key)
+
+    logger.info(f"Matched files: {matched}")
+
+    return matched
 
 @task
 def process_file(source_bucket, target_bucket, key, info):
