@@ -51,13 +51,13 @@ def get_matching_files(bucket: str, table: str, date: str):
     contents = response.get("Contents", [])
 
     matched_files = []
-    print(table)
+    logger.info(table)
 
     for obj in contents:
         key = obj["Key"]# order_reviews_ecom_04092026.csv
         filename = key.split(".")[-1]
-        print(filename)
-        print(key)
+        logger.info(filename)
+        logger.info(key)
         if filename.startswith(f"{table}_ecom_") and date in filename:
             matched_files.append(key)
 
