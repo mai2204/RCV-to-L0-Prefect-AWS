@@ -43,12 +43,12 @@ def build_file_date(info):
 def get_matching_files(bucket: str, tablename: str, date: str):
     logger = get_run_logger()
     s3 = boto3.client("s3")
-
+    
     logger.info(f"[S3] Scanning bucket: {bucket}")
     logger.info(f"[FILTER] table={tablename}, date={date}")
     
     try:
-        files = list_files(bucket)
+        files = list_files(bucket, s3)
     except Exception as e:
         logger.error(f"[ERROR] Cannot list files from bucket: {bucket}")
         logger.error(str(e))
