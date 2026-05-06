@@ -49,7 +49,7 @@ def get_matching_files(bucket: str, tablename: str, date: str):
     logger.info(f"[FILTER] table={tablename}, date={date}")
     
     try:
-        files = list_files(bucket, s3)
+        files = list_files(bucket)
     except Exception as e:
         logger.error(f"[ERROR] Cannot list files from bucket: {bucket}")
         logger.error(str(e))
